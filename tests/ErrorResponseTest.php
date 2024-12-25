@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phauthentic\ErrorResponse\Tests;
+namespace Phauthentic\ProblemDetails\Tests;
 
 use InvalidArgumentException;
-use Phauthentic\ErrorResponse\ErrorResponse;
+use Phauthentic\ProblemDetails\ErrorResponse;
 use PHPUnit\Framework\TestCase;
 
 class ErrorResponseTest extends TestCase

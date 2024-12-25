@@ -1,8 +1,10 @@
 {
-    "name": "phauthentic/error-response",
+    "name": "phauthentic/problem-details",
     "type": "library",
     "require-dev": {
+        "infection/infection": "^0.29.10",
         "nyholm/psr7": "^1.8",
+        "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9.5.0",
         "squizlabs/php_codesniffer": "^3.9"
@@ -10,12 +12,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Phauthentic\\ErrorResponse\\": "src/"
+            "Phauthentic\\ProblemDetails\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Phauthentic\\ErrorResponse\\Tests\\": "tests/"
+            "Phauthentic\\ProblemDetails\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -31,6 +33,38 @@
     },
     "config": {
         "sort-packages": true,
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ],
+        "infection": [
+            "infection"
+        ],
+        "test-coverage": [
+            "phpunit --coverage-text"
+        ],
+        "test-coverage-html": [
+            "phpunit --coverage-html tmp/coverage/"
+        ],
+        "cscheck": [
+            "phpcs src/ tests/ -s"
+        ],
+        "csfix": [
+            "phpcbf src/ tests/"
+        ],
+        "analyze": [
+            "phpstan analyse src/"
+        ],
+        "analyse": [
+            "phpstan analyse src/"
+        ],
+        "phpmd": [
+            "bin/phpmd ./src/ text phpmd.xml"
+        ]
     }
 }

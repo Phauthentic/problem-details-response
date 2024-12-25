@@ -2,32 +2,51 @@
 
 declare(strict_types=1);
 
-namespace Phauthentic\ErrorResponse;
+namespace Phauthentic\ProblemDetails;
 
 use Exception;
+use JsonException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ *
+ */
 class ErrorResponseMiddleware implements MiddlewareInterface
 {
     /**
      * @param ResponseFactoryInterface $responseFactory
      * @param ErrorResponseExceptionBasedFactoryInterface $errorResponseFactory
      * @param array<int, string> $exceptionClasses
-     * @return void
+     * @param bool $onlyOnJsonRequests
      */
     public function __construct(
         protected ResponseFactoryInterface $responseFactory,
         protected ErrorResponseExceptionBasedFactoryInterface $errorResponseFactory,
-        protected array $exceptionClasses = [Exception::class]
+        protected array $exceptionClasses = [Exception::class],
+        protected bool $onlyOnJsonRequests = true
     ) {
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    /**
+     * {@inheritDoc}
+     *
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws Exception
+     */
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
+        if (!$this->isJsonRequest($request)) {
+            return $handler->handle($request);
+        }
+
         try {
             return $handler->handle($request);
         } catch (Exception $exception) {
@@ -41,6 +60,12 @@ class ErrorResponseMiddleware implements MiddlewareInterface
         }
     }
 
+    protected function isJsonRequest(ServerRequestInterface $request): bool
+    {
+        return $this->onlyOnJsonRequests
+            && in_array('application/json', $request->getHeader('Accept'), true);
+    }
+
     protected function isAnInterceptableException(Exception $exception): bool
     {
         foreach ($this->exceptionClasses as $class) {
@@ -52,6 +77,11 @@ class ErrorResponseMiddleware implements MiddlewareInterface
         return false;
     }
 
+    /**
+     * @param ErrorResponseInterface $errorResponse
+     * @return string
+     * @throws JsonException
+     */
     protected function errorResponseToJson(ErrorResponseInterface $errorResponse): string
     {
         return json_encode($errorResponse->toArray(), JSON_THROW_ON_ERROR);
@@ -60,6 +90,7 @@ class ErrorResponseMiddleware implements MiddlewareInterface
     public function createResponse(ErrorResponseInterface $errorResponse): ResponseInterface
     {
         $response = $this->responseFactory->createResponse($errorResponse->getStatus());
+
         $body = $response->getBody();
         $body->write($this->errorResponseToJson($errorResponse));
 
