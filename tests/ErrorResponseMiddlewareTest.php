@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Phauthentic\ErrorResponse\Tests;
+namespace Phauthentic\ProblemDetails\Tests;
 
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Phauthentic\ErrorResponse\ErrorResponseFactory;
-use Phauthentic\ErrorResponse\ErrorResponseMiddleware;
+use Phauthentic\ProblemDetails\ErrorResponseFactory;
+use Phauthentic\ProblemDetails\ErrorResponseMiddleware;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class ErrorResponseMiddlewareTest extends TestCase
 {
-    public function testProcessErrorResponse(): void
+    public function testThatExceptionInHandlerWillReturnErrorResponse(): void
     {
         $middleware = new ErrorResponseMiddleware(
             new Psr17Factory(),
@@ -38,6 +38,7 @@ class ErrorResponseMiddlewareTest extends TestCase
             (string)$response->getBody()
         );
         $this->assertSame(500, $response->getStatusCode());
+        $this->assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
     }
 
     public function testProcessHandlesUnhandledException(): void

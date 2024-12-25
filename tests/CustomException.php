@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phauthentic\ErrorResponse\Tests;
+namespace Phauthentic\ProblemDetails\Tests;
 
 use Exception;
 

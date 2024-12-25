@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phauthentic\ErrorResponse\Tests;
+namespace Phauthentic\ProblemDetails\Tests;
 
 use Exception;
-use Phauthentic\ErrorResponse\ErrorResponse;
-use Phauthentic\ErrorResponse\ErrorResponseFactory;
-use Phauthentic\ErrorResponse\ErrorResponseInterface;
+use Phauthentic\ProblemDetails\ErrorResponse;
+use Phauthentic\ProblemDetails\ErrorResponseFactory;
+use Phauthentic\ProblemDetails\ErrorResponseInterface;
 use PHPUnit\Framework\TestCase;
 
 class ErrorResponseFactoryTest extends TestCase
